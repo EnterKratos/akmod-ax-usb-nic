@@ -105,7 +105,15 @@ install -Dm644 Readme %{buildroot}%{_docdir}/%{name}/Readme
 
 
 
-%files
+%package -n ax-usb-nic-kmod-common
+Summary:        Common files for ax-usb-nic kernel module
+BuildArch:      noarch
+
+%description -n ax-usb-nic-kmod-common
+Common files for the ax-usb-nic kernel module, including the blacklist
+config to prevent the in-kernel ax88179_178a driver from loading.
+
+%files -n ax-usb-nic-kmod-common
 %doc Readme
 %{_prefix}/lib/modprobe.d/ax_usb_nic_blacklist.conf
 
