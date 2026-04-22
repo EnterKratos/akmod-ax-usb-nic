@@ -99,7 +99,7 @@ install -Dm644 ax_usb_nic_blacklist.conf \
     %{buildroot}%{_prefix}/lib/modprobe.d/ax_usb_nic_blacklist.conf
 
 # Install upstream documentation
-install -Dm644 Readme %{buildroot}%{_docdir}/%{name}/Readme
+install -Dm644 Readme %{buildroot}%{_docdir}/ax-usb-nic-kmod-common/Readme
 
 
 
@@ -114,7 +114,7 @@ Common files for the ax-usb-nic kernel module, including the blacklist
 config to prevent the in-kernel ax88179_178a driver from loading.
 
 %files -n ax-usb-nic-kmod-common
-%doc Readme
+%doc %{_docdir}/ax-usb-nic-kmod-common/Readme
 %{_prefix}/lib/modprobe.d/ax_usb_nic_blacklist.conf
 
 %check
