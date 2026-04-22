@@ -73,7 +73,8 @@ kmodtool --target %{_target_cpu} --repo rpmfusion --kmodname ax-usb-nic %{?build
 
 # Set up build directories for each kernel version
 for kernel_version in %{?kernel_versions}; do
-    cp -a . _kmod_build_${kernel_version%%___*}
+    mkdir _kmod_build_${kernel_version%%___*}
+    cp -a $(ls | grep -v '^_kmod_build') _kmod_build_${kernel_version%%___*}/
 done
 
 
