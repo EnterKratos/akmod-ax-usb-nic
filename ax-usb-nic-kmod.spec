@@ -105,6 +105,10 @@ install -Dm644 Readme %{buildroot}%{_docdir}/%{name}/Readme
 
 
 
+%files
+%doc Readme
+%{_prefix}/lib/modprobe.d/ax_usb_nic_blacklist.conf
+
 %check
 # No tests — kernel modules cannot be meaningfully tested at build time
 # without a running kernel matching the build target.
