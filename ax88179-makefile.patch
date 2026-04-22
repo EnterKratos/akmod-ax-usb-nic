@@ -1,0 +1,9 @@
+--- Makefile.orig	2026-04-21 17:02:38.316135172 +0100
++++ Makefile	2026-04-21 17:03:50.087254628 +0100
+@@ -1,5 +1,5 @@
+ TARGET	= ax_usb_nic
+-KDIR	:= /lib/modules/$(shell uname -r)/build
++KDIR	?= /lib/modules/$(shell uname -r)/build
+ PWD	= $(shell pwd)
+ RULE_FILE = 50-ax_usb_nic.rules
+ RULE_PATH = /etc/udev/rules.d/
