@@ -24,15 +24,22 @@ prevent it from claiming the device before `ax_usb_nic` can load.
 
 ## Installation
 
+Supported Fedora releases are listed on the COPR project page:
+https://copr.fedorainfracloud.org/coprs/enterkratos/akmod-ax-usb-nic/
+
+**Fedora Kinoite / Silverblue**:
 ```bash
-dnf copr enable enterkratos/akmod-ax-usb-nic
-rpm-ostree install akmod-ax-usb-nic   # Fedora Kinoite / Silverblue
-# or
-sudo dnf install akmod-ax-usb-nic     # standard Fedora
+sudo wget -O /etc/yum.repos.d/enterkratos-akmod-ax-usb-nic.repo \
+    https://copr.fedorainfracloud.org/coprs/enterkratos/akmod-ax-usb-nic/repo/fedora-$(rpm -E %fedora)/enterkratos-akmod-ax-usb-nic-fedora-$(rpm -E %fedora).repo
+rpm-ostree install akmod-ax-usb-nic
+systemctl reboot
 ```
 
-The COPR project page is at:
-https://copr.fedorainfracloud.org/coprs/enterkratos/akmod-ax-usb-nic/
+**Standard Fedora**:
+```bash
+sudo dnf copr enable enterkratos/akmod-ax-usb-nic
+sudo dnf install akmod-ax-usb-nic
+```
 
 The source for this package is at:
 https://github.com/EnterKratos/akmod-ax-usb-nic
