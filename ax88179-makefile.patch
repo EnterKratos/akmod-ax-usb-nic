@@ -1,5 +1,5 @@
---- Makefile.orig	2026-04-21 17:02:38.316135172 +0100
-+++ Makefile	2026-04-21 17:03:50.087254628 +0100
+--- Makefile.orig	2026-06-02 11:31:32.911192343 +0100
++++ Makefile	2026-06-02 11:31:32.912650520 +0100
 @@ -1,5 +1,5 @@
  TARGET	= ax_usb_nic
 -KDIR	:= /lib/modules/$(shell uname -r)/build

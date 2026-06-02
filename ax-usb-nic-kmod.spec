@@ -8,8 +8,8 @@
 # Update both of these when bumping to a new upstream release.
 # Source0 URL may also need updating — check:
 # https://www.asix.com.tw/en/support/download
-%global driver_version 4.0.0
-%global driver_sha256  9a08945f4d285c1751747edffc13d82b62044e9b3bc7d09831038207f348442f
+%global driver_version 4.1.0
+%global driver_sha256  fd650b715ee41d2a871e7a1c5ab5c42e01aa5a252cc9a4b4fcdb89f1287482b6
 
 Name:           ax-usb-nic-kmod
 Version:        %{driver_version}
@@ -23,7 +23,7 @@ URL:            https://www.asix.com.tw/en/product/USBEthernet
 
 # Official ASIX source. URL may change between versions.
 # SHA256 is verified in %%prep — update %%{driver_sha256} above when bumping.
-Source0:        https://www.asix.com.tw/en/support/download/file/2116#/ASIX_USB_NIC_Linux_Driver_Source_v%{driver_version}.tar.bz2
+Source0:        https://www.asix.com.tw/en/support/download/file/2154#/ASIX_USB_NIC_Linux_Driver_Source_v%{driver_version}.tar.bz2
 
 # Allows KDIR to be overridden at build time so the module can be compiled
 # against a kernel other than the currently running one. Changes KDIR from
@@ -69,6 +69,8 @@ echo "%{driver_sha256}  %{SOURCE0}" | sha256sum --check
 kmodtool --target %{_target_cpu} --repo rpmfusion --kmodname ax-usb-nic %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null
 
 %setup -q -n ASIX_USB_NIC_Linux_Driver_Source_v%{driver_version}
+# Upstream Makefile may ship with CRLF line endings; normalize before patching.
+sed -i 's/\r$//' Makefile
 %patch 0 -p0
 
 # Set up build directories for each kernel version
@@ -124,6 +126,11 @@ config to prevent the in-kernel ax88179_178a driver from loading.
 
 
 %changelog
+* Tue Jun 02 2026 EnterKratos <15807441+EnterKratos@users.noreply.github.com> - 4.1.0-1
+- Update to official ASIX vendor driver v4.1.0
+- Update Source0 download URL to file/2154
+- Normalize upstream Makefile CRLF line endings in %%prep before patching
+
 * Wed Apr 22 2026 EnterKratos <15807441+EnterKratos@users.noreply.github.com> - 4.0.0-1
 - Initial package using official ASIX vendor driver v4.0.0
 - Single Makefile patch for out-of-tree akmod builds (ax88179-makefile.patch)
