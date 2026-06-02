@@ -10,15 +10,18 @@ ASIX does not exhibit this problem.
 
 ## Source and modifications
 
-The driver source is the **official ASIX Linux driver v4.0.0**, downloaded from:
-https://www.asix.com.tw/en/support/download/file/2116
+The driver source is the official ASIX Linux vendor tarball. The current
+version, download URL, and SHA256 are recorded in `ax-usb-nic-kmod.spec` and
+verified at build time in `%prep`.
 
-The SHA256 of the tarball is recorded and verified in `ax-usb-nic-kmod.spec`.
+Packaging changes to the upstream source:
 
-The only modification to the official source is in `ax88179-makefile.patch`:
-a single character change to `Makefile` that allows the kernel build directory
-to be overridden at compile time (`KDIR := ...` → `KDIR ?= ...`). This is
-required for akmod out-of-tree builds and has no effect on normal usage.
+- `ax88179-makefile.patch` — a single character change to `Makefile` that
+  allows the kernel build directory to be overridden at compile time
+  (`KDIR := ...` → `KDIR ?= ...`). Required for akmod out-of-tree builds.
+- `%prep` — upstream `Makefile` line endings are normalized to LF before
+  patching (`sed -i 's/\r$//' Makefile`). Recent ASIX tarballs ship CRLF
+  line endings; the patch is kept LF-only in git.
 
 The blacklist config (`ax_usb_nic_blacklist.conf`) is shipped unmodified from
 the official ASIX source. It blacklists the in-kernel `ax88179_178a` driver to
@@ -29,10 +32,24 @@ prevent it from claiming the device before `ax_usb_nic` can load.
 Supported Fedora releases are listed on the COPR project page:
 https://copr.fedorainfracloud.org/coprs/enterkratos/akmod-ax-usb-nic/
 
-**Fedora Kinoite / Silverblue**:
+**Fedora Kinoite / Silverblue** — first install:
 ```bash
 sudo wget -O /etc/yum.repos.d/enterkratos-akmod-ax-usb-nic.repo \
     https://copr.fedorainfracloud.org/coprs/enterkratos/akmod-ax-usb-nic/repo/fedora-$(rpm -E %fedora)/enterkratos-akmod-ax-usb-nic-fedora-$(rpm -E %fedora).repo
+rpm-ostree install akmod-ax-usb-nic
+systemctl reboot
+```
+
+**Fedora Kinoite / Silverblue** — upgrade to a new COPR release:
+```bash
+rpm-ostree refresh-md
+rpm-ostree upgrade
+systemctl reboot
+```
+
+If the layered package does not bump to the new version after upgrade:
+```bash
+rpm-ostree uninstall akmod-ax-usb-nic
 rpm-ostree install akmod-ax-usb-nic
 systemctl reboot
 ```
@@ -43,14 +60,17 @@ sudo dnf copr enable enterkratos/akmod-ax-usb-nic
 sudo dnf install akmod-ax-usb-nic
 ```
 
+To upgrade: `sudo dnf upgrade akmod-ax-usb-nic`, then `sudo akmods --force`
+and reboot.
+
 ## Maintenance
 
 Releases are triggered by pushing a Git tag in the format `PKGNAME-VERSION-RELEASE`.
 COPR picks up the tag and triggers a build automatically. For example:
 
 ```bash
-git tag ax-usb-nic-kmod-4.0.0-1
-git push origin master ax-usb-nic-kmod-4.0.0-1
+git tag ax-usb-nic-kmod-X.X.X-X
+git push origin master ax-usb-nic-kmod-X.X.X-X
 ```
 
 The `Release` field resets to `1` when the upstream driver version changes, and
@@ -74,10 +94,11 @@ When a new version is released (replace `X.X.X` with the actual version number):
    sha256sum ASIX_USB_NIC_Linux_Driver_Source_vX.X.X.tar.bz2
    ```
 
-3. Check the patch still applies cleanly:
+3. Check the patch still applies cleanly (normalize CRLF first, as in `%prep`):
    ```bash
    tar -xjf ASIX_USB_NIC_Linux_Driver_Source_vX.X.X.tar.bz2
    cd ASIX_USB_NIC_Linux_Driver_Source_vX.X.X
+   sed -i 's/\r$//' Makefile
    patch -p0 --dry-run < /path/to/akmod-ax-usb-nic/ax88179-makefile.patch
    cd ..
    rm -rf ASIX_USB_NIC_Linux_Driver_Source_vX.X.X
@@ -106,6 +127,7 @@ If the upstream Makefile changes and the existing patch no longer applies:
 ```bash
 tar -xjf ASIX_USB_NIC_Linux_Driver_Source_vX.X.X.tar.bz2
 cd ASIX_USB_NIC_Linux_Driver_Source_vX.X.X
+sed -i 's/\r$//' Makefile
 cp Makefile Makefile.orig
 sed -i 's/KDIR\t:= /KDIR\t?= /' Makefile
 diff -u Makefile.orig Makefile > ../ax88179-makefile.patch
